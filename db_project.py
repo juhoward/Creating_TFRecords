@@ -34,14 +34,33 @@ directory_search(data_dir)
 """ 
 function that filters paths for a single synset
 """ 
-files = []
+target_files = []
 def synset_filter(synset):
     synset = str(synset)
     global pathlist
+    global target_files
+    target_files.clear()
     target_files = [ s for s in pathlist if synset in s]
     print(target_files[0],len(target_files))
     
 synset_filter('n01443537')
+
+"""
+function that uses filtered paths to create arrays for images in a 
+single synset
+"""
+arrays = []
+def gen_array():
+    global target_files
+    global arrays
+    for f in target_files:
+        x = Image.open(f)
+        x_arr = np.array([np.array(x)])
+        arrays.append(x_arr)
+        
+    print("Number of arrays entered: " + str(len(arrays)))
+    print(arrays[0].shape)
+gen_array()
 
 """ working way to find and read an image """
 folders = os.listdir(data_dir)
