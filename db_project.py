@@ -31,6 +31,17 @@ def directory_search(path):
     print('Pathlist length: ' + str(len(pathlist)))
 directory_search(data_dir)
 
+""" 
+function that filters paths for a single synset
+""" 
+files = []
+def synset_filter(synset):
+    synset = str(synset)
+    global pathlist
+    target_files = [ s for s in pathlist if synset in s]
+    print(target_files[0],len(target_files))
+    
+synset_filter('n01443537')
 
 """ working way to find and read an image """
 folders = os.listdir(data_dir)
