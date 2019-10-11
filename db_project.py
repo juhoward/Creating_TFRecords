@@ -21,22 +21,16 @@ def directory_search(path):
     global files
     dirpaths.clear()
     files.clear()
-    # retrieves directory paths, and includes the given path
-    for dirpath, dirnames, files in os.walk(path):
-        dirpaths.append(dirpath)
-    dirpaths.remove(dirpaths[0])
-        #for file in files:
-            #dirnames.append(dirname)
-            #files.append(file)
-    #num_files = len(files)
-    list_len = len(dirpaths)    
-    print("The number of directories is :" + str(list_len))
-    #print("The number of files is: " + str(num_files))
-    #print("The number of directory names within " + path + " is: " + len(dirnames))
-    #print("The number of files within " + path + " is: " + len(files))
-    print('The structure of the first path: \n' + dirpaths[0])
-    return
+    pathlist = []
+    for path, sub, files in os.walk(path):
+        sub = [n for n in sub]
+        contents = files
+        for f in contents:
+            print('Print Path:', path + os.sep + os.sep + f)
+            pathlist.append(path + os.sep + os.sep + f)
+    print('Pathlist length: ' + str(len(pathlist)))
 directory_search(data_dir)
+
 
 """ working way to find and read an image """
 folders = os.listdir(data_dir)
