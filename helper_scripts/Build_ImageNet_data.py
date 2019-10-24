@@ -1,8 +1,7 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-# -*- coding: utf-8 -*-
 """
 Created on Sun Oct 20 14:08:05 2019
 transforms imagenet dataset into TFrecords
@@ -89,20 +88,23 @@ import threading
 import numpy as np
 import six
 import tensorflow as tf
-####################################################################################
+
 """
 my add-ins 
 """
-from pathlib import Path
-data_dir = 'c:/users/howar/documents/database_management/Term_project/dataset/DET'
-new_path = Path(data_dir + os.sep + 'train')
+
+train_directory = 'C:\\Users\\howar\\Documents\\Database_Management\\Term_Project\\Dataset\\DET\\train\\ILSVRC2013_train' 
+val_dir = 'C:\\Users\\howar\\Documents\\Database_Management\\Term_Project\\Dataset\\DET\\val'
+
+
+
 ####################################################################################
 
-tf.app.flags.DEFINE_string('train_directory', '/tmp/',
+tf.app.flags.DEFINE_string('train_directory', 'C:/Users/howar/Documents/Database_Management/Term_Project/Dataset/DET/val',
                            'Training data directory')
-tf.app.flags.DEFINE_string('validation_directory', '/tmp/',
+tf.app.flags.DEFINE_string('validation_directory', 'C:/Users/howar/Documents/Database_Management/Term_Project/Dataset/DET/train/ILSVRC2013_train/',
                            'Validation data directory')
-tf.app.flags.DEFINE_string('output_directory', '/tmp/',
+tf.app.flags.DEFINE_string('output_directory', 'C:/Users/howar/Documents/Database_Management/Term_Project/Dataset/DET/TF_Recordsfolder',
                            'Output data directory')
 
 tf.app.flags.DEFINE_integer('train_shards', 1024,
@@ -122,7 +124,7 @@ tf.app.flags.DEFINE_integer('num_threads', 8,
 # each synset contained in the file to an integer (based on the alphabetical
 # ordering). See below for details.
 tf.app.flags.DEFINE_string('labels_file',
-                           'synset_labels.txt',
+                           'num_threads.txt',
                            'Labels file')
 
 # This file containing mapping from synset to human-readable label.
@@ -151,7 +153,7 @@ tf.app.flags.DEFINE_string('imagenet_metadata_file',
 # Note that there might exist mulitple bounding box annotations associated
 # with an image file.
 tf.app.flags.DEFINE_string('bounding_box_file',
-                           'bboxes.csv',
+                           'bounding_boxes.csv',
                            'Bounding box file')
 
 FLAGS = tf.app.flags.FLAGS
@@ -311,7 +313,7 @@ def _process_image(filename, coder):
     width: integer, image width in pixels.
   """
   # Read the image file.
-  with tf.gfile.FastGFile(filename, 'rb') as f:
+  with tf.gfile.GFile(filename, 'rb') as f:
     image_data = f.read()
 
   # Clean the dirty data.
@@ -486,7 +488,7 @@ def _find_image_files(data_dir, labels_file):
   """
   print('Determining list of input files and labels from %s.' % data_dir)
   challenge_synsets = [l.strip() for l in
-                       tf.gfile.FastGFile(labels_file, 'r').readlines()]
+                       tf.gfile.GFile(labels_file, 'r').readlines()]
 
   labels = []
   filenames = []
@@ -600,7 +602,7 @@ def _build_synset_lookup(imagenet_metadata_file):
     Dictionary of synset to human labels, such as:
       'n02119022' --> 'red fox, Vulpes vulpes'
   """
-  lines = tf.gfile.FastGFile(imagenet_metadata_file, 'r').readlines()
+  lines = tf.gfile.GFile(imagenet_metadata_file, 'r').readlines()
   synset_to_human = {}
   for l in lines:
     if l:
@@ -627,7 +629,7 @@ def _build_bounding_box_lookup(bounding_box_file):
     Dictionary mapping image file names to a list of bounding boxes. This list
     contains 0+ bounding boxes.
   """
-  lines = tf.gfile.FastGFile(bounding_box_file, 'r').readlines()
+  lines = tf.gfile.GFile(bounding_box_file, 'r').readlines()
   images_to_bboxes = {}
   num_bbox = 0
   num_image = 0
@@ -673,5 +675,5 @@ def main(unused_argv):
 
 
 if __name__ == '__main__':
-  tf.app.run()
+  tf.compat.v1.app.run()
 
