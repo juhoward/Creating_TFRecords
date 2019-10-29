@@ -97,10 +97,9 @@ train_directory = 'C:\\Users\\howar\\Documents\\Database_Management\\Term_Projec
 val_dir = 'C:\\Users\\howar\\Documents\\Database_Management\\Term_Project\\Dataset\\DET\\val'
 
 
-
 ####################################################################################
 
-tf.app.flags.DEFINE_string('train_directory', 'C:/Users/howar/Documents/Database_Management/Term_Project/Dataset/DET/val',
+tf.app.flags.DEFINE_string('train_directory', 'C:/Users/howar/Documents/Database_Management/Term_Project/Dataset/DET/train/ILSVRC2013_train/',
                            'Training data directory')
 tf.app.flags.DEFINE_string('validation_directory', 'C:/Users/howar/Documents/Database_Management/Term_Project/Dataset/DET/train/ILSVRC2013_train/',
                            'Validation data directory')
@@ -235,20 +234,20 @@ class ImageCoder(object):
 
   def __init__(self):
     # Create a single Session to run all image coding calls.
-    self._sess = tf.Session()
+    self._sess = tf.compat.v1.Session()
 
     # Initializes function that converts PNG to JPEG data.
-    self._png_data = tf.placeholder(dtype=tf.string)
+    self._png_data = tf.compat.v1.placeholder(dtype=tf.string)
     image = tf.image.decode_png(self._png_data, channels=3)
     self._png_to_jpeg = tf.image.encode_jpeg(image, format='rgb', quality=100)
 
     # Initializes function that converts CMYK JPEG data to RGB JPEG data.
-    self._cmyk_data = tf.placeholder(dtype=tf.string)
+    self._cmyk_data = tf.compat.v1.placeholder(dtype=tf.string)
     image = tf.image.decode_jpeg(self._cmyk_data, channels=0)
     self._cmyk_to_rgb = tf.image.encode_jpeg(image, format='rgb', quality=100)
 
     # Initializes function that decodes RGB JPEG data.
-    self._decode_jpeg_data = tf.placeholder(dtype=tf.string)
+    self._decode_jpeg_data = tf.compat.v1.placeholder(dtype=tf.string)
     self._decode_jpeg = tf.image.decode_jpeg(self._decode_jpeg_data, channels=3)
 
   def png_to_jpeg(self, image_data):
@@ -313,7 +312,7 @@ def _process_image(filename, coder):
     width: integer, image width in pixels.
   """
   # Read the image file.
-  with tf.gfile.GFile(filename, 'rb') as f:
+  with tf.io.gfile.GFile(filename, 'rb') as f:
     image_data = f.read()
 
   # Clean the dirty data.
@@ -374,7 +373,7 @@ def _process_image_files_batch(coder, thread_index, ranges, name, filenames,
     shard = thread_index * num_shards_per_batch + s
     output_filename = '%s-%.5d-of-%.5d' % (name, shard, num_shards)
     output_file = os.path.join(FLAGS.output_directory, output_filename)
-    writer = tf.python_io.TFRecordWriter(output_file)
+    writer = tf.io.TFRecordWriter(output_file)
 
     shard_counter = 0
     files_in_shard = np.arange(shard_ranges[s], shard_ranges[s + 1], dtype=int)
@@ -488,7 +487,7 @@ def _find_image_files(data_dir, labels_file):
   """
   print('Determining list of input files and labels from %s.' % data_dir)
   challenge_synsets = [l.strip() for l in
-                       tf.gfile.GFile(labels_file, 'r').readlines()]
+                       tf.io.gfile.GFile(labels_file, 'r').readlines()]
 
   labels = []
   filenames = []
@@ -500,7 +499,7 @@ def _find_image_files(data_dir, labels_file):
   # Construct the list of JPEG files and labels.
   for synset in challenge_synsets:
     jpeg_file_path = '%s/%s/*.JPEG' % (data_dir, synset)
-    matching_files = tf.gfile.Glob(jpeg_file_path)
+    matching_files = tf.io.gfile.glob(jpeg_file_path)
 
     labels.extend([label_index] * len(matching_files))
     synsets.extend([synset] * len(matching_files))
@@ -602,7 +601,7 @@ def _build_synset_lookup(imagenet_metadata_file):
     Dictionary of synset to human labels, such as:
       'n02119022' --> 'red fox, Vulpes vulpes'
   """
-  lines = tf.gfile.GFile(imagenet_metadata_file, 'r').readlines()
+  lines = tf.io.gfile.GFile(imagenet_metadata_file, 'r').readlines()
   synset_to_human = {}
   for l in lines:
     if l:
@@ -629,7 +628,7 @@ def _build_bounding_box_lookup(bounding_box_file):
     Dictionary mapping image file names to a list of bounding boxes. This list
     contains 0+ bounding boxes.
   """
-  lines = tf.gfile.GFile(bounding_box_file, 'r').readlines()
+  lines = tf.io.gfile.GFile(bounding_box_file, 'r').readlines()
   images_to_bboxes = {}
   num_bbox = 0
   num_image = 0
