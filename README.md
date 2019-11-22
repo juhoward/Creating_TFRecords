@@ -9,26 +9,26 @@ The steps below are a path we took toward completing that goal.
 
 1. Create your TensorFlow environment. We recommend the tf-gpu version of the install.
   You can use the [tf-gpu.yml](./tf-gpu.yml) environment file that we provide. It installs the dependencies for tensorflow 2.0.
-  To actually use tensorflow's GPU capabilities, install CUDA and CuDNN
+  -To actually use tensorflow's GPU capabilities, install CUDA and CuDNN
 
-2. Clone Google's tensorflow/models repository in the same directory as your tf-gpu environment for convenience.
+2. Clone Google's `tensorflow/models` repository in the same directory as your tf-gpu environment for convenience.
 ```bash
 git clone https://github.com/tensorflow/models.git
 ```
 ## Downloading ImageNet ILSVRC2017 dataset for object detection:
 
-1. Download the ILSVRC2017 dataset from 'http://image-net.org/challenges/LSVRC/2017/downloads'
-  It is 55GB and can take about 10 hours if you have a fiber optic connection. If storage space or time are issues, this blog post provides a solution:
-  https://blog.exxactcorp.com/deep-learning-with-tensorflow-training-resnet-50-from-scratch-using-the-imagenet-dataset/
+1. Download the ILSVRC2017 dataset from http://image-net.org/challenges/LSVRC/2017/downloads
+-It is 55GB and can take about 10 hours if you have a fiber optic connection. If storage space or time are issues, this blog post provides a solution:
+- https://blog.exxactcorp.com/deep-learning-with-tensorflow-training-resnet-50-from-scratch-using-the-imagenet-dataset/
   
 2. Download the boundary box annotations from http://image-net.org/download-bboxes
 
-3. Within the conda terminal, change directories to: C:yourpath\tensorflow\models\research\slim\datasets
+3. Within the conda terminal, change directories to: `C:yourpath\tensorflow\models\research\slim\datasets`
   Run the bounding box parsing script from the terminal:
 ```bash
   python process_bounding_boxes.py <dir_where_annotations_are> [optional-synsets-textfile-to-limit-script] 1> bounding_boxes.csv
 ```
-  The 1> bounding_boxes.csv portion will redirect the output of the script to a CSV file you'll search for in your current directory.
+  The `1> bounding_boxes.csv` portion will redirect the output of the script to a CSV file you'll search for in your current directory.
 
 4. To create TFRecords using the Google script, you will need the following data that you can find in the TFRecords directory of this repository:
   `labels_file.txt`
@@ -36,13 +36,19 @@ git clone https://github.com/tensorflow/models.git
   `synset_labels.txt`
   `imagenet_metadata.txt`
   `bounding_boxes.csv`
+  
   You can either create these files yourself, or you can use those we have supplied.
 
-5. Run `build_imagenet_data.py`
+5. Create a directory to store your TFRecords in and define the directories where your TFRecords, training data, and validation datasets. 
+- You can use the `??helpful` command from the conda command terminal to print a list of flags.
+- We edited the `build_imagenet_data.py` script to reflect our `data-dir`, `train_dir`, and `validation_dir` locations.
+
+6. Run `build_imagenet_data.py`
 ```bash
 python build_imagenet_data.py --dir=<insert data_dir here>
 ```
-  You can either edit the script to supply your data_directory or use the `--dir=` "data_dir" flag.
+
+You should have TFRecords!
 
 
 
