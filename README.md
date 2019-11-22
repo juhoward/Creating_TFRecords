@@ -25,9 +25,9 @@ git clone https://github.com/tensorflow/models.git
 
 3. Within the conda terminal, change directories to: C:yourpath\tensorflow\models\research\slim\datasets
   Run the bounding box parsing script from the terminal:
-  ``` bash
+```bash
   python process_bounding_boxes.py <dir_where_annotations_are> [optional-synsets-textfile-to-limit-script] 1> bounding_boxes.csv
-  ```
+```
   The 1> bounding_boxes.csv portion will redirect the output of the script to a CSV file you'll search for in your current directory.
 
 4. To create TFRecords using the Google script, you will need the following data that you can find in the TFRecords directory of this repository:
